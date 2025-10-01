@@ -13,10 +13,14 @@ class ActorNode : DialogueGraphNode
         context.AddInputPort<string>(PORT_ACTOR_NAME_NAME)
             .Build();
         context.AddOutputPort<string>(PORT_ACTOR_NAME_NAME)
+            .WithDisplayName(string.Empty)
+            .WithConnectorUI(PortConnectorUI.Arrowhead)
             .Build();
         context.AddInputPort<Sprite>(PORT_ACTOR_IMAGE_NAME)
             .Build();
         context.AddOutputPort<Sprite>(PORT_ACTOR_IMAGE_NAME)
+            .WithDisplayName(string.Empty)
+            .WithConnectorUI(PortConnectorUI.Arrowhead)
             .Build();
     }
 }
