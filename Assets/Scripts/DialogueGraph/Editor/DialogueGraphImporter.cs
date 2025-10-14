@@ -14,7 +14,7 @@ public class DialogueGraphImporter : ScriptedImporter
 
         if (editorGraph == null)
         {
-            Debug.LogError($"Failed to load Visual Novel Director graph asset: {ctx.assetPath}");
+            Debug.LogError($"Failed to load graph asset: {ctx.assetPath}");
             return;
         }
 
@@ -70,18 +70,27 @@ public class DialogueGraphImporter : ScriptedImporter
 
     private T GetPortValue<T>(IPort port)
     {
-        if (port == null) return default;
+        T value = default;
 
         if (port.isConnected)
         {
-            if (port.firstConnectedPort.GetNode() is IVariableNode variableNode)
+            switch (port.firstConnectedPort.GetNode())
             {
-                variableNode.variable.TryGetDefaultValue(out T value);
-                return value;
+                case IVariableNode variableNode:
+                    variableNode.variable.TryGetDefaultValue<T>(out value);
+                    return value;
+                case IConstantNode constantNode:
+                    constantNode.TryGetValue<T>(out value);
+                    return value;
+                default:
+                    break;
             }
         }
+        else
+        {
+            port.TryGetValue(out value);
+        }
 
-        port.TryGetValue(out T fallbackValue);
-        return fallbackValue;
+        return value;
     }
 }
