@@ -11,6 +11,13 @@ public class DialogueGraphImporter : ScriptedImporter
     public override void OnImportAsset(AssetImportContext ctx)
     {
         DialogueGraph editorGraph = GraphDatabase.LoadGraphForImporter<DialogueGraph>(ctx.assetPath);
+
+        if (editorGraph == null)
+        {
+            Debug.LogError($"Failed to load Visual Novel Director graph asset: {ctx.assetPath}");
+            return;
+        }
+
         RuntimeDialogueGraph runtimeGraph = ScriptableObject.CreateInstance<RuntimeDialogueGraph>();
         var nodeIDMap = new Dictionary<INode, string>();
 
@@ -41,6 +48,8 @@ public class DialogueGraphImporter : ScriptedImporter
             {
                 ProcessDialogueNode(dialogueNode, runtimeNode, nodeIDMap);
             }
+
+            runtimeGraph.AllNodes.Add(runtimeNode);
         }
 
         ctx.AddObjectToAsset("RuntimeData", runtimeGraph);
