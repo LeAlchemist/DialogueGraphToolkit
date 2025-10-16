@@ -1,30 +1,19 @@
-using UnityEngine;
-using Unity.GraphToolkit.Editor;
 using System;
+using Unity.GraphToolkit.Editor;
 
 [Serializable]
-public class DialogueNode : Node
+internal class DialogueNode : DialogueGraphNode
 {
-    public const string InPortName = "In";
-    public const string OutPortName = "Out";
-    public const string SpeakerPortName = "Speaker";
-    public const string DialoguePortName = "Dialogue";
+    public const string DialogueText = "Dialogue Text";
+
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        context.AddInputPort(InPortName)
-        .WithDisplayName(string.Empty)
-        .WithConnectorUI(PortConnectorUI.Arrowhead)
-        .Build();
+        AddInputOutputExecutionPorts(context);
 
-        context.AddInputPort<string>(SpeakerPortName)
-        .Build();
-
-        context.AddInputPort<string>(DialoguePortName)
-        .Build();
-
-        context.AddOutputPort(OutPortName)
-        .WithDisplayName(string.Empty)
-        .WithConnectorUI(PortConnectorUI.Arrowhead)
+        context.AddInputPort<string>(DialogueText)
+        .WithDisplayName(DialogueText)
+        .WithDefaultValue("Dialogue Text Here")
+        .WithConnectorUI(PortConnectorUI.Circle)
         .Build();
     }
 }

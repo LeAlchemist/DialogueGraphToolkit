@@ -1,17 +1,44 @@
-using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.GraphToolkit.Editor;
 using UnityEditor;
-using System;
 
 [Serializable]
 [Graph(AssetExtension)]
-public class DialogueGraph : Graph
+internal class DialogueGraph : Graph
 {
-    public const string AssetExtension = "graph";
+    const string graphName = "Dialogue Graph";
+    internal const string AssetExtension = "graph";
 
-    [MenuItem("Assets/Create/Dialogue Graph", false)]
-    private static void CreateAssetFile()
+    [MenuItem("Assets/Create/Dialogue Graph")]
+    static void CreateAssetFile()
     {
-        GraphDatabase.PromptInProjectBrowserToCreateNewAsset<DialogueGraph>();
+        GraphDatabase.PromptInProjectBrowserToCreateNewAsset<DialogueGraph>(graphName);
+    }
+
+    public override void OnGraphChanged(GraphLogger graphLogger)
+    {
+        base.OnGraphChanged(graphLogger);
+
+        CheckGraphErrors(graphLogger);
+    }
+
+    void CheckGraphErrors(GraphLogger graphLogger)
+    {
+        List<StartNode> startNodes = GetNodes().OfType<StartNode>().ToList();
+
+        switch (startNodes.Count)
+        {
+            case 0:
+                graphLogger.LogError("Add a StartNode in your Dialogue Graph", this);
+                break;
+            case >= 1:
+                foreach (var startNode in startNodes.Skip(1))
+                {
+                    graphLogger.LogError($"Dialogue Graph only supports one StartNode per graph, only the first one will be used", startNode);
+                }
+                break;
+        }
     }
 }

@@ -1,15 +1,12 @@
-using UnityEngine;
-using Unity.GraphToolkit.Editor;
 using System;
+using Unity.GraphToolkit.Editor;
 
 [Serializable]
-public class StartNode : Node
+internal class StartNode : DialogueGraphNode
 {
-    public const string OutPortName = "Out";
-
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        context.AddOutputPort(OutPortName)
+        context.AddOutputPort(OutputPortName)
         .WithDisplayName(string.Empty)
         .WithConnectorUI(PortConnectorUI.Arrowhead)
         .Build();
