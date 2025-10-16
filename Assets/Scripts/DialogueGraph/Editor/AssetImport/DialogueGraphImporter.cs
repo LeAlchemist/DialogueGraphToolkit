@@ -53,18 +53,26 @@ internal class DialogueGraphImporter : ScriptedImporter
         var runtimeNodes = new List<DialogueGraphNodeRuntime>();
         switch (node)
         {
-            case DialogueNode dialogueNode:
-                runtimeNodes.Add(new DialogueNodeRuntime
-                {
-                    DialogueText = GetInputPortValue<string>(dialogueNode.GetInputPortByName(DialogueNode.DialogueText))
-                });
-                break;
             case ActorNode actorNode:
                 runtimeNodes.Add(new ActorNodeRuntime
                 {
                     ActorName = GetInputPortValue<string>(actorNode.GetInputPortByName(ActorNode.ActorName)),
                     ActorPortrait = GetInputPortValue<Sprite>(actorNode.GetInputPortByName(ActorNode.ActorPortrait)),
                     ActorSprite = GetInputPortValue<Sprite>(actorNode.GetInputPortByName(ActorNode.ActorSprite))
+                });
+                break;
+            case BackgroundNode backgroundNode:
+                var nodeName = "Background Node";
+                runtimeNodes.Add(new BackgroundNodeRuntime
+                {
+                    name = nodeName,
+                    BackgroundImage = GetInputPortValue<Sprite>(backgroundNode.GetInputPortByName(BackgroundNode.BackgroundImage))
+                });
+                break;
+            case DialogueNode dialogueNode:
+                runtimeNodes.Add(new DialogueNodeRuntime
+                {
+                    DialogueText = GetInputPortValue<string>(dialogueNode.GetInputPortByName(DialogueNode.DialogueText))
                 });
                 break;
             default:
