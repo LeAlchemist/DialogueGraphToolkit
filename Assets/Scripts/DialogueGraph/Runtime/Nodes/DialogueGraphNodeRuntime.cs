@@ -7,5 +7,5 @@ public abstract class DialogueGraphNodeRuntime
 {
     [HideInInspector]
     public string name;
-    public List<int> NextNodeIndices = new();
+    public List<int> NextNode = new();
 }

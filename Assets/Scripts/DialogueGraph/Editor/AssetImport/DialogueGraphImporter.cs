@@ -54,6 +54,12 @@ internal class DialogueGraphImporter : ScriptedImporter
             foreach (var runtimeNode in runtimeNodes)
             {
                 nodeMap[currentNode] = runtimeGraph.nodes.Count;
+
+                if (currentNode is ChoiceNode choiceNode)
+                {
+                    ProcessChoiceNode(choiceNode, (ChoiceNodeRuntime)runtimeNode);
+                }
+
                 runtimeGraph.nodes.Add(runtimeNode);
             }
 
@@ -84,7 +90,7 @@ internal class DialogueGraphImporter : ScriptedImporter
 
                 if (port.isConnected && nodeMap.TryGetValue(port.firstConnectedPort.GetNode(), out int nextIndex))
                 {
-                    runtimeNode.NextNodeIndices.Add(nextIndex);
+                    runtimeNode.NextNode.Add(nextIndex);
                 }
             }
         }
@@ -95,18 +101,6 @@ internal class DialogueGraphImporter : ScriptedImporter
         var runtimeNodes = new List<DialogueGraphNodeRuntime>();
         switch (node)
         {
-            case ActorNode actorNode:
-                {
-                    var nodeName = "Actor Node";
-                    runtimeNodes.Add(new ActorNodeRuntime
-                    {
-                        name = nodeName,
-                        ActorName = GetInputPortValue<string>(actorNode.GetInputPortByName(ActorNode.ActorName)),
-                        ActorPortrait = GetInputPortValue<Sprite>(actorNode.GetInputPortByName(ActorNode.ActorPortrait)),
-                        ActorSprite = GetInputPortValue<Sprite>(actorNode.GetInputPortByName(ActorNode.ActorSprite))
-                    });
-                }
-                break;
             case BackgroundNode backgroundNode:
                 {
                     var nodeName = "Background Node";
@@ -120,10 +114,14 @@ internal class DialogueGraphImporter : ScriptedImporter
             case ChoiceNode choiceNode:
                 {
                     var nodeName = "Choice Node";
+
                     runtimeNodes.Add(new ChoiceNodeRuntime
                     {
                         name = nodeName,
-                        DialogueText = GetInputPortValue<string>(choiceNode.GetInputPortByName(ChoiceNode.DialogueText))
+                        ActorName = GetInputPortValue<string>(node.GetInputPortByName(ChoiceNode.ActorName)),
+                        ActorPortrait = GetInputPortValue<Sprite>(node.GetInputPortByName(ChoiceNode.ActorPortrait)),
+                        ActorSprite = GetInputPortValue<Sprite>(node.GetInputPortByName(ChoiceNode.ActorSprite)),
+                        DialogueText = GetInputPortValue<string>(node.GetInputPortByName(ChoiceNode.DialogueText))
                     });
                 }
                 break;
@@ -133,6 +131,9 @@ internal class DialogueGraphImporter : ScriptedImporter
                     runtimeNodes.Add(new DialogueNodeRuntime
                     {
                         name = nodeName,
+                        ActorName = GetInputPortValue<string>(dialogueNode.GetInputPortByName(DialogueNode.ActorName)),
+                        ActorPortrait = GetInputPortValue<Sprite>(dialogueNode.GetInputPortByName(DialogueNode.ActorPortrait)),
+                        ActorSprite = GetInputPortValue<Sprite>(dialogueNode.GetInputPortByName(DialogueNode.ActorSprite)),
                         DialogueText = GetInputPortValue<string>(dialogueNode.GetInputPortByName(DialogueNode.DialogueText))
                     });
                 }
@@ -150,6 +151,25 @@ internal class DialogueGraphImporter : ScriptedImporter
                 throw new ArgumentException($"Unsupported node model type: {node.GetType()}");
         }
         return runtimeNodes;
+    }
+
+    private void ProcessChoiceNode(ChoiceNode node, ChoiceNodeRuntime runtime)
+    {
+        var choiceOutputPorts = node.GetOutputPorts().Where(p => p.name.StartsWith(ChoiceNode.DialogueChoice));
+
+        foreach (var outputPort in choiceOutputPorts)
+        {
+            var index = outputPort.name.Substring($"{ChoiceNode.DialogueChoice}".Length);
+
+            var textPort = node.GetInputPortByName($"{ChoiceNode.DialogueChoice}{index}");
+
+            var choiceData = new ChoiceData
+            {
+                ChoiceText = GetInputPortValue<string>(textPort)
+            };
+
+            runtime.Choices.Add(choiceData);
+        }
     }
 
     static T GetInputPortValue<T>(IPort port)
