@@ -36,9 +36,19 @@ internal class DialogueGraph : Graph
             case >= 1:
                 foreach (var startNode in startNodes.Skip(1))
                 {
-                    graphLogger.LogError($"Dialogue Graph only supports one StartNode per graph, only the first one will be used", startNode);
+                    graphLogger.LogError("Dialogue Graph only supports one StartNode per graph, only the first one will be used", startNode);
                 }
                 break;
+        }
+
+        List<ChoiceNode> choiceNodes = GetNodes().OfType<ChoiceNode>().ToList();
+
+        foreach (var choiceNode in choiceNodes)
+        {
+            if (choiceNode.GetOutputPorts().Count() >= 6)
+            {
+                graphLogger.LogWarning("Too many choices may create issue with UI elements", choiceNode);
+            }
         }
     }
 }
