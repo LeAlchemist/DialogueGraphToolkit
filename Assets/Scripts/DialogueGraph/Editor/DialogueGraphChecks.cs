@@ -10,12 +10,10 @@ public class DialogueGraphChecks : MonoBehaviour
 {
     //this is for optional/required packages
     const string pkgGraphToolkit = "com.unity.graphtoolkit";
-    const string pkgCinaMachine = "com.unity.cinemachine";
 
     static DialogueGraphChecks()
     {
         CheckPackages(pkgGraphToolkit);
-        CheckPackages(pkgCinaMachine);
     }
 
     private static void CheckPackages(string pkgName)

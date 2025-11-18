@@ -118,22 +118,27 @@ internal class DialogueGraphImporter : ScriptedImporter
                     runtimeNodes.Add(new ChoiceNodeRuntime
                     {
                         name = nodeName,
-                        ActorName = GetInputPortValue<string>(node.GetInputPortByName(ChoiceNode.ActorName)),
-                        ActorPortrait = GetInputPortValue<Sprite>(node.GetInputPortByName(ChoiceNode.ActorPortrait)),
-                        ActorSprite = GetInputPortValue<Sprite>(node.GetInputPortByName(ChoiceNode.ActorSprite)),
-                        DialogueText = GetInputPortValue<string>(node.GetInputPortByName(ChoiceNode.DialogueText))
+                        ActorName = GetInputPortValue<string>(choiceNode.GetInputPortByName(DialogueNode.ActorName)),
+                        ActorSprite = GetInputPortValue<Sprite>(choiceNode.GetInputPortByName(DialogueNode.ActorSprite)),
+                        ActorSpriteIndex = (int)GetInputPortValue<DialogueNode.ActorLocation>(choiceNode.GetInputPortByName(DialogueNode.ActorSpriteLocation)),
+                        ActorPortrait = GetInputPortValue<Sprite>(choiceNode.GetInputPortByName(DialogueNode.ActorPortraitSprite)),
+                        ActorPortraitIndex = (int)GetInputPortValue<DialogueNode.PortraitLocation>(choiceNode.GetInputPortByName(DialogueNode.ActorPortraitLocation)),
+                        DialogueText = GetInputPortValue<string>(choiceNode.GetInputPortByName(DialogueNode.DialogueText))
                     });
                 }
                 break;
             case DialogueNode dialogueNode:
                 {
                     var nodeName = "Dialogue Node";
+
                     runtimeNodes.Add(new DialogueNodeRuntime
                     {
                         name = nodeName,
                         ActorName = GetInputPortValue<string>(dialogueNode.GetInputPortByName(DialogueNode.ActorName)),
-                        ActorPortrait = GetInputPortValue<Sprite>(dialogueNode.GetInputPortByName(DialogueNode.ActorPortrait)),
                         ActorSprite = GetInputPortValue<Sprite>(dialogueNode.GetInputPortByName(DialogueNode.ActorSprite)),
+                        ActorSpriteIndex = (int)GetInputPortValue<DialogueNode.ActorLocation>(dialogueNode.GetInputPortByName(DialogueNode.ActorSpriteLocation)),
+                        ActorPortrait = GetInputPortValue<Sprite>(dialogueNode.GetInputPortByName(DialogueNode.ActorPortraitSprite)),
+                        ActorPortraitIndex = (int)GetInputPortValue<DialogueNode.PortraitLocation>(dialogueNode.GetInputPortByName(DialogueNode.ActorPortraitLocation)),
                         DialogueText = GetInputPortValue<string>(dialogueNode.GetInputPortByName(DialogueNode.DialogueText))
                     });
                 }
@@ -159,7 +164,7 @@ internal class DialogueGraphImporter : ScriptedImporter
 
         foreach (var outputPort in choiceOutputPorts)
         {
-            var index = outputPort.name.Substring($"{ChoiceNode.DialogueChoice}".Length);
+            var index = outputPort.name[$"{ChoiceNode.DialogueChoice}".Length..];
 
             var textPort = node.GetInputPortByName($"{ChoiceNode.DialogueChoice}{index}");
 
@@ -194,6 +199,14 @@ internal class DialogueGraphImporter : ScriptedImporter
         {
             port.TryGetValue(out value);
         }
+
+        return value;
+    }
+
+    static T GetOptionValue<T>(INodeOption option)
+    {
+
+        option.TryGetValue(out T value);
 
         return value;
     }

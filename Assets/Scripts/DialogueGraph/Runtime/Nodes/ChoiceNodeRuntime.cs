@@ -4,12 +4,8 @@ using Unity.GraphToolkit.Editor;
 using UnityEngine;
 
 [Serializable]
-public class ChoiceNodeRuntime : DialogueGraphNodeRuntime
+public class ChoiceNodeRuntime : DialogueNodeRuntime
 {
-    public string ActorName;
-    public Sprite ActorPortrait;
-    public Sprite ActorSprite;
-    public string DialogueText;
     public List<ChoiceData> Choices = new();
 }
 
