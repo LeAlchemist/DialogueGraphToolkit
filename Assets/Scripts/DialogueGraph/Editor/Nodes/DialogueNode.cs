@@ -10,13 +10,11 @@ internal class DialogueNode : DialogueGraphNode
         Left = 0,
         Center = 1,
         Right = 2,
-        None = 3
     };
     public enum PortraitLocation
     {
         Left = 0,
         Right = 1,
-        None = 2
     };
     public const string ActorName = "Actor Name";
     public const string ActorPortraitSprite = "Actor Portrait";
