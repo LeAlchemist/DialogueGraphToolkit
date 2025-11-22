@@ -55,9 +55,12 @@ internal class DialogueGraphImporter : ScriptedImporter
             {
                 nodeMap[currentNode] = runtimeGraph.nodes.Count;
 
-                if (currentNode is ChoiceNode choiceNode)
+                switch (currentNode)
                 {
-                    ProcessChoiceNode(choiceNode, (ChoiceNodeRuntime)runtimeNode);
+                    case ChoiceNode choiceNode:
+                        ProcessChoiceNode(choiceNode, (ChoiceNodeRuntime)runtimeNode);
+                        Debug.Log($"{currentNode} {currentNode.outputPortCount}");
+                        break;
                 }
 
                 runtimeGraph.nodes.Add(runtimeNode);
@@ -149,6 +152,24 @@ internal class DialogueGraphImporter : ScriptedImporter
                     runtimeNodes.Add(new StartNodeRuntime
                     {
                         name = nodeName,
+                    });
+                }
+                break;
+            case EndNode endNode:
+                {
+                    var nodeName = "End Node";
+                    runtimeNodes.Add(new EndNodeRuntime
+                    {
+                        name = nodeName,
+                    });
+                }
+                break;
+            case WaitForInputNode waitForInputNode:
+                {
+                    var nodeName = "Wait for Input Node";
+                    runtimeNodes.Add(new WaitForInputNodeRuntime
+                    {
+                        name = nodeName
                     });
                 }
                 break;
