@@ -12,7 +12,7 @@ public class DialogueGraphDirector : MonoBehaviour
 {
     [Header("Dialogue Graph")]
     public DialogueGraphRuntime DialogueGraph;
-    public int currentNode;
+    public int CurrentNode;
     [Header("Scene Reference")]
     public Image Background;
     public List<Image> ActorSpriteLocation;
@@ -20,6 +20,7 @@ public class DialogueGraphDirector : MonoBehaviour
     public GameObject DialoguePanel;
     public TextMeshProUGUI ActorNameText;
     public TextMeshProUGUI DialogueText;
+    public List<Button> ChoiceButtons;
     [Header("Settings")]
     public float GlobalFadeDuration = 0.5f;
     public float GlobalTextDelayPerCharacter = 0.03f;
@@ -28,20 +29,20 @@ public class DialogueGraphDirector : MonoBehaviour
 
     public void Update()
     {
-        switch (DialogueGraph.nodes[currentNode])
+        switch (DialogueGraph.nodes[CurrentNode])
         {
             case StartNodeRuntime startNode:
                 DialogueText.text = "";
-                NextNode(currentNode);
+                NextNode(CurrentNode);
                 break;
             case EndNodeRuntime endNode:
                 break;
             case WaitForInputNodeRuntime waitForInputNode:
-                NextNodeInput(currentNode);
+                NextNodeInput(CurrentNode);
                 break;
             case BackgroundNodeRuntime backgroundNode:
                 Background.sprite = backgroundNode.BackgroundImage;
-                NextNode(currentNode);
+                NextNode(CurrentNode);
                 break;
             case DialogueNodeRuntime dialogueNode:
                 if (string.IsNullOrEmpty(dialogueNode.DialogueText))
@@ -68,17 +69,27 @@ public class DialogueGraphDirector : MonoBehaviour
                 //dialogue text
                 DialogueText.text = dialogueNode.DialogueText;
 
-                NextNodeInput(currentNode);
+                if (DialogueGraph.nodes[CurrentNode].GetType().ToString() != "DialogueNodeRuntime")
+                {
+                    Debug.Log("supposed to add buttons here");
+                    var button = ChoiceButtons[0];
+                    button.GetComponentInChildren<TextMeshProUGUI>().text = "test";
+                    button.GetComponent<Button>().onClick.AddListener(() => NextNodeChoice(CurrentNode, 1, button));
+                }
+                else
+                {
+                    NextNodeInput(CurrentNode);
+                }
                 break;
             default:
-                Debug.LogWarning($"No executor found for node type: {DialogueGraph.nodes[currentNode].GetType()}");
+                Debug.LogWarning($"No executor found for node type: {DialogueGraph.nodes[CurrentNode].GetType()}");
                 break;
         }
     }
 
     public void NextNode(int _currentNode)
     {
-        currentNode = DialogueGraph.nodes[_currentNode].NextNode.FirstOrDefault();
+        CurrentNode = DialogueGraph.nodes[_currentNode].NextNode.FirstOrDefault();
     }
 
     void NextNodeInput(int _currentNode)
@@ -89,14 +100,15 @@ public class DialogueGraphDirector : MonoBehaviour
             {
                 if (context.ReadValueAsButton() == true)
                 {
-                    currentNode = DialogueGraph.nodes[_currentNode].NextNode.FirstOrDefault();
+                    CurrentNode = DialogueGraph.nodes[_currentNode].NextNode.FirstOrDefault();
                 }
             };
         }
     }
 
-    public void NextNodeChoice(int _currentNode)
+    public void NextNodeChoice(int _currentNode, int _choice, Button _button)
     {
-
+        CurrentNode = DialogueGraph.nodes[_currentNode].NextNode[_choice];
+        _button.GetComponent<Button>().onClick.RemoveAllListeners();
     }
 }
