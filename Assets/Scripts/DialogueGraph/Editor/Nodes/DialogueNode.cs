@@ -2,6 +2,7 @@ using System;
 using Unity.GraphToolkit.Editor;
 using UnityEngine;
 
+[Node("Node", "", "Dialogue")]
 [Serializable]
 class DialogueNode : Node
 {
@@ -27,5 +28,11 @@ class DialogueNode : Node
         .WithDisplayName(string.Empty)
         .WithConnectorUI(PortConnectorUI.Arrowhead)
         .Build();
+    }
+
+    public override void OnEnable()
+    {
+        Subtitle = "This is a Dialogue node";
+        DefaultColor = Color.green;
     }
 }

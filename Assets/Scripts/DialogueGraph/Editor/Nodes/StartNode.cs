@@ -2,6 +2,7 @@ using System;
 using Unity.GraphToolkit.Editor;
 using UnityEngine;
 
+[Node("Node", "", "Start")]
 [Serializable]
 class StartNode : Node
 {
@@ -18,6 +19,6 @@ class StartNode : Node
     public override void OnEnable()
     {
         Subtitle = "This is the start node";
-        DefaultColor = Color.white;
+        DefaultColor = Color.grey;
     }
 }
