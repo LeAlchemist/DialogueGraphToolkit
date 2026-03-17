@@ -3,14 +3,16 @@ using Unity.GraphToolkit.Editor;
 using UnityEngine;
 
 [Serializable]
-class StartNode : DialogueGraphNode
+class StartNode : Node
 {
+    public const string OutPortName = "Out";
+
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        context.AddOutputPort(EXECUTION_PORT_DEFAULT_NAME)
-            .WithDisplayName(string.Empty)
-            .WithConnectorUI(PortConnectorUI.Arrowhead)
-            .Build();
+        context.AddOutputPort(OutPortName)
+        .WithDisplayName(string.Empty)
+        .WithConnectorUI(PortConnectorUI.Arrowhead)
+        .Build();
     }
 
     public override void OnEnable()
