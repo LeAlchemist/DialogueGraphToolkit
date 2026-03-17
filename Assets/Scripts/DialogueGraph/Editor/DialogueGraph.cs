@@ -9,13 +9,12 @@ using Unity.GraphToolkit.Editor;
 [Serializable]
 public class DialogueGraph : Graph
 {
-    public const string GraphName = "Dialogue Graph";
     public const string AssetExtension = "graph";
 
-    [MenuItem("Assets/Create/Dialogue Graph")]
-    static void CreateAssetFile()
+    [MenuItem("Assets/Create/Dialogue Graph", false)]
+    private static void CreateAssetFile()
     {
-        GraphDatabase.PromptInProjectBrowserToCreateNewAsset<DialogueGraph>(GraphName);
+        GraphDatabase.PromptInProjectBrowserToCreateNewAsset<DialogueGraph>();
     }
 
     public override void OnGraphChanged(GraphLogger infos)
